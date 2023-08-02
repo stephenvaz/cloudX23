@@ -1,42 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:story/api/api.dart';
+import 'package:get/get.dart';
+import 'package:story/components/storytile.dart';
+import 'package:story/controllers/home_controller.dart';
+import 'package:animated_gradient/animated_gradient.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class Home extends StatelessWidget {
+  final HomeController _controller = Get.put<HomeController>(HomeController());
 
-  @override
-  State<Home> createState() => _HomeState();
-}
+  Home({super.key});
 
-class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // list of stories
-          const Spacer(),
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: SizedBox(
-              width: double.infinity,
-              height: 64,
-              child: ElevatedButton(
-                onPressed: () async {
-                  // show loading screen
-                  int count = await Api().getStoryCount();
-                  var data = await Api().getStory(count);
-                  // print(data);
-
-                  // once ready append the story to the list of stories
+      body: AnimatedGradient(
+            colors:  [ 
+              const Color.fromARGB(255, 118, 203, 189),
+              const Color(0xFFeec5ce),
+              const Color.fromARGB(255, 235, 207, 189),
+            ],
+          
+    
+        child: Obx(
+          () {
+            if (_controller.stories.isEmpty) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return ListView.builder(
+                itemCount: _controller.stories.length,
+                itemBuilder: (context, index) {
+                  return StoryTile(
+                    title: _controller.stories[index]['title'],
+                    image: _controller.stories[index]['img'][0],
+                    story: _controller.stories[index]['story'],
+                  );
                 },
-                child: const Text('Generate Story'),
-              ),
-            ),
-          ),
-        ],
+              );
+            }
+          },
+        ),
       ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(left: 24, right: 24),
+        child: SizedBox(
+          width: double.infinity,
+          height: 64,
+          child: ElevatedButton(
+            onPressed: () async {
+              _controller.fetchData();
+            },
+            child: const Text('Generate Story'),
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
