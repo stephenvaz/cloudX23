@@ -1,17 +1,21 @@
+import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_flip_card/controllers/flip_card_controllers.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:story/api/api.dart';
+import 'package:story/components/storyplayer.dart';
 
 class StoryTile extends StatefulWidget {
+  final int id;
   final String title;
-  final String image;
+  final List image;
   final String story;
 
   const StoryTile({
     Key? key,
+    required this.id,
     required this.title,
     required this.image,
     required this.story,
@@ -24,18 +28,31 @@ class StoryTile extends StatefulWidget {
 class _StoryTileState extends State<StoryTile> {
   Color? backgroundColor;
   Color? textColor;
+  String rImage = '';
 
   final FlipCardController _flipCardController = FlipCardController();
 
   @override
   void initState() {
     super.initState();
+    // print("id: ${widget.id}");
+    // rImage = widget.image.replaceAll("http://127.0.0.1:5000/", Api.baseURL);
+    for (var i = 0; i < widget.image.length; i++) {
+      
+        widget.image[i].replaceAll("http://127.0.0.1:5000/", Api.baseURL);
+    }
+    
+    // choose a random image from the list
+    // get a random number between 0 and length of the list
+    final int random = Random().nextInt(widget.image.length);
+    rImage = widget.image[random];
     _extractImageColor();
   }
 
   Future<void> _extractImageColor() async {
     final paletteGenerator = await PaletteGenerator.fromImageProvider(
-      NetworkImage(widget.image),
+      // NetworkImage(widget.image),
+      NetworkImage(rImage),
     );
     setState(() {
       backgroundColor = paletteGenerator.dominantColor?.color;
@@ -61,9 +78,11 @@ class _StoryTileState extends State<StoryTile> {
   Widget frontCard() {
     return GestureDetector(
       onTap: () {
-        _flipCardController.flipcard();
+        // open a bottom sheet with the story
+        storyTeller();
       },
       child: Container(
+        height: 200,
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(16),
@@ -83,7 +102,7 @@ class _StoryTileState extends State<StoryTile> {
           child: Stack(
             children: [
               Image.network(
-                widget.image,
+                rImage,
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: 200, // Adjust the height to make the image bigger
@@ -92,8 +111,7 @@ class _StoryTileState extends State<StoryTile> {
                 child: BackdropFilter(
                   filter: ui.ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
                   child: Container(
-                    color: Colors.black
-                        .withOpacity(0.3), // Adjust the blur opacity as needed
+                    color: Colors.black.withOpacity(0.3),
                   ),
                 ),
               ),
@@ -104,7 +122,7 @@ class _StoryTileState extends State<StoryTile> {
                 leading: ClipRRect(
                   borderRadius: BorderRadius.circular(4),
                   child: Image.network(
-                    widget.image,
+                    rImage,
                     width: 80,
                     height: 80,
                     fit: BoxFit.cover,
@@ -119,21 +137,19 @@ class _StoryTileState extends State<StoryTile> {
                     color: textColor,
                   ),
                 ),
-                // subtitle: Text(
-                //   '${widget.story.substring(0, 150)}...',
-                //   maxLines: 2,
-                //   overflow: TextOverflow.ellipsis,
-                //   style: TextStyle(
-                //     fontSize: 14,
-                //     fontFamily: 'KidsFont',
-                //     color: textColor,
-                //   ),
-                // ),
-                // trailing: Icon(
-                //   Icons.arrow_forward,
-                //   color: textColor,
-                //   size: 30,
-                // ),
+              ),
+              Positioned(
+                bottom: 8,
+                right: 8,
+                child: CircleAvatar(
+                  backgroundColor: Colors.teal.shade200.withOpacity(0.5),
+                  child: IconButton(
+                    onPressed: () {
+                      _flipCardController.flipcard();
+                    },
+                    icon: const Icon(Icons.flip),
+                  ),
+                ),
               ),
             ],
           ),
@@ -142,101 +158,142 @@ class _StoryTileState extends State<StoryTile> {
     );
   }
 
-  Widget backCard() {
-    return GestureDetector(
-      onTap: () {
-        _flipCardController.flipcard();
+  Future<dynamic> storyTeller() {
+    return showModalBottomSheet(
+      showDragHandle: true,
+      isScrollControlled: true,
+      context: context,
+      backgroundColor: Colors.black87,
+      builder: (context) {
+        return StoryPlayer(widget: widget, textColor: textColor);
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: backgroundColor != null
-                  ? backgroundColor!.withOpacity(0.5)
-                  : Colors.grey.withOpacity(0.5),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
+    );
+  }
+
+  Widget backCard() {
+    return Container(
+      height: 200,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: backgroundColor != null
+                ? backgroundColor!.withOpacity(0.5)
+                : Colors.grey.withOpacity(0.5),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Stack(
+          children: [
+            Image.network(
+              rImage,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: 200, // Adjust the height to make the image bigger
+            ),
+            Positioned.fill(
+              child: BackdropFilter(
+                filter: ui.ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+                child: Container(
+                  color: Colors.black.withOpacity(0.3),
+                ),
+              ),
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    '${widget.story}...',
+                    maxLines: 5,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontFamily: 'KidsFont',
+                      color: Colors.white, // Use a playful text color
+                    ),
+                  ),
+                ),
+                Spacer(),
+                Container(
+                  decoration: BoxDecoration(
+                    color: backgroundColor?.withOpacity(0.5),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          // TODO: Navigate to the next screen
+                        },
+                        child: Text(
+                          'Read More',
+                          style: TextStyle(
+                            color: textColor, // Use an appealing button color
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          _flipCardController.flipcard();
+                        },
+                        icon: Icon(
+                          Icons.flip,
+                          color: textColor, // Use an appealing button color
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: Stack(
-            children: [
-              Image.network(
-                widget.image,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: 200, // Adjust the height to make the image bigger
-              ),
-              Positioned.fill(
-                child: BackdropFilter(
-                  filter: ui.ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
-                  child: Container(
-                    color: Colors.black
-                        .withOpacity(0.3), // Adjust the blur opacity as needed
-                  ),
-                ),
-              ),
-              // ListTile(
-              //   onTap: () {
-              //     // TODO: Add navigation to the story page
-              //   },
-              //   leading: ClipRRect(
-              //     borderRadius: BorderRadius.circular(4),
-              //     child: Image.network(
-              //       widget.image,
-              //       width: 80,
-              //       height: 80,
-              //       fit: BoxFit.cover,
-              //     ),
-              //   ),
-              //   title: Text(
-              //     widget.title,
-              //     style: TextStyle(
-              //       fontWeight: FontWeight.bold,
-              //       fontSize: 18,
-              //       fontFamily: 'KidsFont',
-              //       color: textColor,
-              //     ),
-              //   ),
-              //   // subtitle: Text(
-              //   //   '${widget.story.substring(0, 150)}...',
-              //   //   maxLines: 2,
-              //   //   overflow: TextOverflow.ellipsis,
-              //   //   style: TextStyle(
-              //   //     fontSize: 14,
-              //   //     fontFamily: 'KidsFont',
-              //   //     color: textColor,
-              //   //   ),
-              //   // ),
-              //   // trailing: Icon(
-              //   //   Icons.arrow_forward,
-              //   //   color: textColor,
-              //   //   size: 30,
-              //   // ),
-              // ),
-    
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  '${widget.story}...',
-                  maxLines: 6,
-                  overflow: TextOverflow.clip,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontFamily: 'KidsFont',
-                    color: textColor,
-                  ),
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
   }
 }
+
+// class StoryPlayer extends StatelessWidget {
+//   const StoryPlayer({
+//     super.key,
+//     required this.widget,
+//     required this.textColor,
+//   });
+
+//   final StoryTile widget;
+//   final ui.Color? textColor;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       height: MediaQuery.of(context).size.height * 0.88,
+//       decoration: BoxDecoration(
+//         color: Colors.black87,
+//         borderRadius: BorderRadius.circular(16),
+//       ),
+//       padding: const EdgeInsets.all(16),
+//       child: Text(
+//         widget.story,
+//         style: TextStyle(
+//           fontSize: 18,
+//           fontFamily: 'KidsFont',
+//           color: textColor,
+//         ),
+//       ),
+//     );
+//   }
+// }
