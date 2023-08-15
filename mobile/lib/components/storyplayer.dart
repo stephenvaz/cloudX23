@@ -47,29 +47,28 @@ class _StoryPlayerState extends State<StoryPlayer>
   }
 
   void sendMessage() async {
-  String message = textController.text;
-  textController.clear();
-  setState(() {
-    chatMessages.insert(0, 'You: $message');
-  });
+    String message = textController.text;
+    textController.clear();
+    setState(() {
+      chatMessages.insert(0, 'You: $message');
+    });
 
-  // Start typing indicator
-  toggleBotTyping(true);
+    // Start typing indicator
+    toggleBotTyping(true);
 
-  // Make the API request and get the response
-  final response = await Api().getFollowupResponse(
-    storyId: widget.widget.id,
-    question: message,
-  );
+    // Make the API request and get the response
+    final response = await Api().getFollowupResponse(
+      storyId: widget.widget.id,
+      question: message,
+    );
 
-  // Stop typing indicator
-  toggleBotTyping(false);
+    // Stop typing indicator
+    toggleBotTyping(false);
 
-  setState(() {
-    chatMessages.insert(0, 'AI: ${response['response']}');
-  });
-}
-
+    setState(() {
+      chatMessages.insert(0, 'AI: ${response['response']}');
+    });
+  }
 
   @override
   void initState() {
@@ -133,7 +132,6 @@ class _StoryPlayerState extends State<StoryPlayer>
 
   bool isBotTyping = false;
 
-  
   void toggleBotTyping(bool typing) {
     setState(() {
       isBotTyping = typing;
@@ -206,11 +204,10 @@ class _StoryPlayerState extends State<StoryPlayer>
                       IconButton(
                         onPressed: () {
                           // Handle search button click
-                              toggleChatOverlay();
-
+                          toggleChatOverlay();
                         },
-                        icon:
-                            const Icon(Icons.search, color: Colors.white, size: 36),
+                        icon: const Icon(Icons.search,
+                            color: Colors.white, size: 36),
                       ),
                       IconButton(
                         onPressed: togglePlayPause,
@@ -222,43 +219,75 @@ class _StoryPlayerState extends State<StoryPlayer>
                       ),
                       IconButton(
                         onPressed: replayStory,
-                        icon:
-                            const Icon(Icons.replay, color: Colors.white, size: 36),
+                        icon: const Icon(Icons.replay,
+                            color: Colors.white, size: 36),
                       ),
                     ],
                   ),
                 ),
               ),
-              
             ],
           ),
         ),
-        if (isChatOverlayVisible)
-          ChatOverlay(parentState: this),
+        if (isChatOverlayVisible) ChatOverlay(parentState: this),
       ],
     );
   }
 }
 
-
-class ChatOverlay extends StatelessWidget {
+class ChatOverlay extends StatefulWidget {
   final _StoryPlayerState parentState;
 
-  ChatOverlay({required this.parentState});
+  ChatOverlay({super.key, required this.parentState});
+
+  @override
+  State<ChatOverlay> createState() => _ChatOverlayState();
+}
+
+class _ChatOverlayState extends State<ChatOverlay>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 1.0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+
+    // Start the animation when the chat overlay is shown
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Positioned.fill(
-      child: GestureDetector(
-        onTap: () {
-          parentState.closeChatOverlay();
-        },
+      child: SlideTransition(
+        position: _slideAnimation,
         child: Container(
-          decoration:  BoxDecoration(
-            color: const Color.fromARGB(255, 55, 68, 67).withOpacity(0.9),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
+          decoration: BoxDecoration(
+            color: const Color(0xff32393d).withOpacity(0.9),
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(16.0)),
           ),
-          padding:  const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 32),
+          padding:
+              const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 32),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -267,32 +296,57 @@ class ChatOverlay extends StatelessWidget {
                 children: [
                   IconButton(
                     onPressed: () {
-                      parentState.clearChat();
+                      widget.parentState.clearChat();
                     },
-                    icon:  const Icon(Icons.delete, color: Colors.white, size: 30,),
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                   ),
                   IconButton(
                     onPressed: () {
-                      parentState.closeChatOverlay();
+                      // widget.parentState.closeChatOverlay();
+                      _animationController.reverse();
                     },
-                    icon:  const Icon(Icons.cancel, color: Colors.white, size: 30,),
+                    icon: const Icon(
+                      Icons.cancel,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                   ),
                 ],
               ),
+              if (widget.parentState.chatMessages.isEmpty)
+                // print("empty");
+                // a chat bubble to indicate that you can ask any question related to the story
+                const ChatBubble(
+                    message: 'Ask me anything about the story!',
+                    isUser: false,
+                    isCenter: true),
               Expanded(
                 child: ListView.builder(
                   reverse: true,
-                  itemCount: parentState.chatMessages.length,
+                  itemCount: widget.parentState.chatMessages.length,
                   itemBuilder: (context, index) {
-                    final message = parentState.chatMessages[index];
+                    // print(parentState.chatMessages.length);
+                    // if (parentState.chatMessages.isEmpty) {
+                    //   print("empty");
+                    //   // a chat bubble to indicate that you can ask any question related to the story
+                    //   return const ChatBubble(
+                    //       message: 'Ask me anything!', isUser: false);
+                    // }
+                    final message = widget.parentState.chatMessages[index];
                     final isUser = message.startsWith('You:');
-                    return ChatBubble(message: message, isUser: isUser);
+                    return ChatBubble(
+                        message: message, isUser: isUser);
                   },
                 ),
               ),
-              if (parentState.isBotTyping)
-                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 12.0),
+              if (widget.parentState.isBotTyping)
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 4.0, horizontal: 12.0),
                   child: Row(
                     children: [
                       const Text('AI: ', style: TextStyle(color: Colors.white)),
@@ -307,10 +361,11 @@ class ChatOverlay extends StatelessWidget {
                 ),
               const SizedBox(height: 8),
               TextField(
-                controller: parentState.textController,
+                controller: widget.parentState.textController,
                 decoration: InputDecoration(
                   hintText: 'Type a message...',
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
@@ -319,7 +374,7 @@ class ChatOverlay extends StatelessWidget {
                   ),
                   suffixIcon: IconButton(
                     onPressed: () {
-                      parentState.sendMessage();
+                      widget.parentState.sendMessage();
                     },
                     icon: const Icon(Icons.send),
                   ),
@@ -333,17 +388,17 @@ class ChatOverlay extends StatelessWidget {
   }
 }
 
-
-
-
 class ChatBubble extends StatelessWidget {
   final String message;
   final bool isUser;
+  final bool? isCenter;
 
   const ChatBubble({
+    Key? key,
     required this.message,
     required this.isUser,
-  });
+    this.isCenter,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -354,10 +409,94 @@ class ChatBubble extends StatelessWidget {
         color: isUser ? Colors.blue : Colors.grey,
         borderRadius: BorderRadius.circular(12.0),
       ),
-      child: Text(
-        message,
-        style: const TextStyle(color: Colors.white),
-      ),
+      child: (isCenter ?? false)
+          ? Center(
+              child: Text(
+                message,
+                style: const TextStyle(color: Colors.white),
+              ),
+            )
+          : Text(
+              message,
+              style: const TextStyle(color: Colors.white),
+            ),
     );
   }
 }
+
+
+// class ChatBubble extends StatefulWidget {
+//   final String message;
+//   final bool isUser;
+//   final bool? isCenter;
+
+//   const ChatBubble({
+//     Key? key,
+//     required this.message,
+//     required this.isUser,
+//     this.isCenter,
+//   }) : super(key: key);
+
+//   @override
+//   _ChatBubbleState createState() => _ChatBubbleState();
+// }
+
+// class _ChatBubbleState extends State<ChatBubble>
+//     with SingleTickerProviderStateMixin {
+//   late AnimationController _animationController;
+//   late Animation<Offset> _slideAnimation;
+
+//   @override
+//   void initState() {
+//     super.initState();
+
+//     final slideOffset = widget.isUser ? Offset(-1.0, 0) : Offset(1.0, 0);
+
+//     _animationController = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 500),
+//     );
+
+//     _slideAnimation = Tween<Offset>(
+//       begin: slideOffset,
+//       end: Offset.zero,
+//     ).animate(CurvedAnimation(
+//       parent: _animationController,
+//       curve: Curves.easeInOut,
+//     ));
+
+//     _animationController.forward();
+//   }
+
+//   @override
+//   void dispose() {
+//     _animationController.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return SlideTransition(
+//       position: _slideAnimation,
+//       child: Container(
+//         margin: const EdgeInsets.symmetric(vertical: 4.0),
+//         padding: const EdgeInsets.all(10.0),
+//         decoration: BoxDecoration(
+//           color: widget.isUser ? Colors.blue : Colors.grey,
+//           borderRadius: BorderRadius.circular(12.0),
+//         ),
+//         child: (widget.isCenter ?? false)
+//             ? Center(
+//                 child: Text(
+//                   widget.message,
+//                   style: const TextStyle(color: Colors.white),
+//                 ),
+//               )
+//             : Text(
+//                 widget.message,
+//                 style: const TextStyle(color: Colors.white),
+//               ),
+//       ),
+//     );
+//   }
+// }

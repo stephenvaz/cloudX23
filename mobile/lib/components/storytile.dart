@@ -38,10 +38,9 @@ class _StoryTileState extends State<StoryTile> {
     // print("id: ${widget.id}");
     // rImage = widget.image.replaceAll("http://127.0.0.1:5000/", Api.baseURL);
     for (var i = 0; i < widget.image.length; i++) {
-      
-        widget.image[i].replaceAll("http://127.0.0.1:5000/", Api.baseURL);
+      widget.image[i].replaceAll("http://127.0.0.1:5000/", Api.baseURL);
     }
-    
+
     // choose a random image from the list
     // get a random number between 0 and length of the list
     final int random = Random().nextInt(widget.image.length);
@@ -68,14 +67,15 @@ class _StoryTileState extends State<StoryTile> {
 
   @override
   Widget build(BuildContext context) {
-    return FlipCard(
-        frontWidget: frontCard(),
-        backWidget: backCard(),
-        controller: _flipCardController,
-        rotateSide: RotateSide.right);
+    // return FlipCard(
+    //     frontWidget: frontCard(),
+    //     backWidget: backCard(),
+    //     controller: _flipCardController,
+    //     rotateSide: RotateSide.right);
+    return storyCard();
   }
 
-  Widget frontCard() {
+  Widget storyCard() {
     return GestureDetector(
       onTap: () {
         // open a bottom sheet with the story
@@ -84,79 +84,172 @@ class _StoryTileState extends State<StoryTile> {
       child: Container(
         height: 200,
         decoration: BoxDecoration(
-          color: backgroundColor,
+          // color: backgroundColor?.withOpacity(0.5),
+          color: Colors.grey.withOpacity(0.3),
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: backgroundColor != null
-                  ? backgroundColor!.withOpacity(0.5)
-                  : Colors.grey.withOpacity(0.5),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          // boxShadow: [
+          //   BoxShadow(
+          //     // color: backgroundColor != null
+          //     //     ? backgroundColor!.withOpacity(0.5)
+          //     //     : Colors.grey.withOpacity(0.5),
+          //     color: Colors.grey.withOpacity(0.4),
+          //     blurRadius: 2,
+          //     offset: const Offset(0, 2),
+          //   ),
+          // ],
         ),
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: Stack(
-            children: [
-              Image.network(
-                rImage,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: 200, // Adjust the height to make the image bigger
-              ),
-              Positioned.fill(
-                child: BackdropFilter(
-                  filter: ui.ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
-                  child: Container(
-                    color: Colors.black.withOpacity(0.3),
-                  ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(
+              width: 120,
+              child: ClipRRect(
+                borderRadius:
+                    const BorderRadius.horizontal(left: Radius.circular(16)),
+                child: Image.network(
+                  rImage,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
                 ),
               ),
-              ListTile(
-                onTap: () {
-                  // TODO: Add navigation to the story page
-                },
-                leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: Image.network(
-                    rImage,
-                    width: 80,
-                    height: 80,
-                    fit: BoxFit.cover,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        widget.title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                title: Text(
-                  widget.title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    fontFamily: 'KidsFont',
-                    color: textColor,
+                  Flexible(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          // Truncate the story and display a part of it
+                          // widget.story.substring(0, 250) + '...',
+                          widget.story,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines:8,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-              Positioned(
-                bottom: 8,
-                right: 8,
-                child: CircleAvatar(
-                  backgroundColor: Colors.teal.shade200.withOpacity(0.5),
-                  child: IconButton(
-                    onPressed: () {
-                      _flipCardController.flipcard();
-                    },
-                    icon: const Icon(Icons.flip),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
+
+  // Widget frontCard() {
+  //   return GestureDetector(
+  //     onTap: () {
+  //       // open a bottom sheet with the story
+  //       storyTeller();
+  //     },
+  //     child: Container(
+  //       height: 200,
+  //       decoration: BoxDecoration(
+  //         color: backgroundColor,
+  //         borderRadius: BorderRadius.circular(16),
+  //         boxShadow: [
+  //           BoxShadow(
+  //             color: backgroundColor != null
+  //                 ? backgroundColor!.withOpacity(0.5)
+  //                 : Colors.grey.withOpacity(0.5),
+  //             blurRadius: 6,
+  //             offset: const Offset(0, 2),
+  //           ),
+  //         ],
+  //       ),
+  //       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  //       child: ClipRRect(
+  //         borderRadius: BorderRadius.circular(16),
+  //         child: Stack(
+  //           children: [
+  //             Image.network(
+  //               rImage,
+  //               fit: BoxFit.cover,
+  //               width: double.infinity,
+  //               height: 200, // Adjust the height to make the image bigger
+  //             ),
+  //             Positioned.fill(
+  //               child: BackdropFilter(
+  //                 filter: ui.ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+  //                 child: Container(
+  //                   color: Colors.black.withOpacity(0.3),
+  //                 ),
+  //               ),
+  //             ),
+  //             ListTile(
+  //               onTap: () {
+  //                 // TODO: Add navigation to the story page
+  //               },
+  //               leading: ClipRRect(
+  //                 borderRadius: BorderRadius.circular(4),
+  //                 child: Image.network(
+  //                   rImage,
+  //                   width: 80,
+  //                   height: 80,
+  //                   fit: BoxFit.cover,
+  //                 ),
+  //               ),
+  //               title: Text(
+  //                 widget.title,
+  //                 style: TextStyle(
+  //                   fontWeight: FontWeight.bold,
+  //                   fontSize: 18,
+  //                   fontFamily: 'KidsFont',
+  //                   color: textColor,
+  //                 ),
+  //               ),
+  //             ),
+  //             // Positioned(
+  //             //   bottom: 8,
+  //             //   right: 8,
+  //             //   child: CircleAvatar(
+  //             //     backgroundColor: Colors.teal.shade200.withOpacity(0.5),
+  //             //     child: IconButton(
+  //             //       onPressed: () {
+  //             //         _flipCardController.flipcard();
+  //             //       },
+  //             //       icon: const Icon(Icons.flip),
+  //             //     ),
+  //             //   ),
+  //             // ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Future<dynamic> storyTeller() {
     return showModalBottomSheet(
@@ -222,7 +315,7 @@ class _StoryTileState extends State<StoryTile> {
                     ),
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 Container(
                   decoration: BoxDecoration(
                     color: backgroundColor?.withOpacity(0.5),
@@ -266,34 +359,3 @@ class _StoryTileState extends State<StoryTile> {
     );
   }
 }
-
-// class StoryPlayer extends StatelessWidget {
-//   const StoryPlayer({
-//     super.key,
-//     required this.widget,
-//     required this.textColor,
-//   });
-
-//   final StoryTile widget;
-//   final ui.Color? textColor;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       height: MediaQuery.of(context).size.height * 0.88,
-//       decoration: BoxDecoration(
-//         color: Colors.black87,
-//         borderRadius: BorderRadius.circular(16),
-//       ),
-//       padding: const EdgeInsets.all(16),
-//       child: Text(
-//         widget.story,
-//         style: TextStyle(
-//           fontSize: 18,
-//           fontFamily: 'KidsFont',
-//           color: textColor,
-//         ),
-//       ),
-//     );
-//   }
-// }

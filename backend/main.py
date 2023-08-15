@@ -254,9 +254,17 @@ def generate():
     audio_file = text_to_wav(story, title, "./audios")
     print("Audio generated")
     save_story(title, story, img, audio_file)
+    print("Story saved")
+    # js = jsonify({'title': title, 'story': story, "id": len(stories_df),
+    #                  'img': request.root_url + 'images/' + title + '.png', 'audio': request.root_url + 'audios/' + title + '.wav'})
+    # print(js)
+
+    img_urls = [request.root_url + 'images/' + img_name + '.png' for img_name in img]
+    print("img urls",img_urls)
+
 
     return jsonify({'title': title, 'story': story, "id": len(stories_df),
-                     'img': request.root_url + 'images/' + title + '.png', 'audio': request.root_url + 'audios/' + title + '.wav'})
+                     'img': img_urls, 'audio': request.root_url + 'audios/' + title + '.wav'})
 
 @app.route('/get_story', methods=['GET'])
 def get_story():

@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
+
 class Api {
   final Dio _dio = Dio();
 
@@ -11,6 +13,11 @@ class Api {
   static final storiesCount = "${baseURL}get_story_count";
   static final getNstories = "${baseURL}get_n_stories";
   static final getFollowup = "${baseURL}get_followup";
+  static final generateStory = "${baseURL}generate";
+
+  void setBaseURL(String url) {
+    baseURL = url;
+  }
 
   Future<int> getStoryCount() async {
     try {
@@ -25,8 +32,12 @@ class Api {
   Future<dynamic> getStory(int n) async {
     try {
       final response = await _dio.get("$getNstories?n=$n");
-      final Map data = response.data;
-      return data['stories'] ?? [];
+      Map data = response.data;
+      List<dynamic> stories = data['stories'];
+      // sort the stories by the id in desc order in the individual objects 
+      stories.sort((a, b) => b['id'].compareTo(a['id']));
+      // print(data['stories']);
+      return stories ?? [];
     } catch (e) {
       return [];
     }
@@ -49,6 +60,24 @@ class Api {
       return response.data;
     } catch (e) {
       return {'response': '', 'audio': ''};
+    }
+  }
+
+  Future<Map<String, dynamic>> createStory({
+    required String topic,
+  }) async {
+    try {
+      final response = await _dio.get(
+        generateStory,
+        queryParameters: {
+          'topic': topic,
+        },
+      );
+      print("story gen resp: ${response.data}");
+      return response.data;
+    } catch (e) {
+      if (kDebugMode) print("story gen err: $e");
+      return {}; // You can handle error cases as needed
     }
   }
 
