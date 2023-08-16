@@ -137,3 +137,5 @@ id,sess_id,story_id,role,content
 136,459696,2,assistant,"Theo, the slow and steady tortoise, wins the race."
 137,539858,3,user,whats the name of the ant and elephant 
 138,539858,3,assistant,"The name of the ant is Adam, and the name of the elephant is Ella."
+139,753818,2,user,name of elephant
+140,753818,2,assistant,The name of the elephant in the story is Ellie.
