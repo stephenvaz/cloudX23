@@ -12,7 +12,8 @@ import lancedb
 
 from flask_cors import CORS
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'service.json'
+# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'service.json'
+# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.getenv("GCP")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -89,7 +90,7 @@ if not os.path.exists(session_file):
     })
     df.to_csv(session_file, index=False)
 
-stories_df = pd.read_csv(stories_file)
+# stories_df = pd.read_csv(stories_file)
 session_df = pd.read_csv(session_file)
 
 def generate_story(topic: str) -> str:
@@ -202,8 +203,9 @@ def save_story(title: str, story: str, img: [],audio_filename: str):
 #[{"vector": [1, 1], "id": 2, "title": "test", "story": "test", "img": ['a', 'b', 'c', 'd'], "audio": "asdasd"}]
    
     insertIntoLance([{
-        "vector":[len(stories_df)+1, len(stories_df)+1],
-        "id": len(stories_df)+1,
+        "vector":[len(getLance())+1, len(getLance())+1],
+        # "id": len(stories_df)+1,
+        "id": len(getLance())+1,
         "title": title,
         "story": story.replace("'", "\\'"),
         "img": images_dest.tolist(),
@@ -226,6 +228,7 @@ def get_followup_response(session_id: int, story_id: int, question: str):
     data = getLance()
     target_story = next((story for story in data if int(story["id"]) == story_id), None)
     story = target_story["story"]
+    print("story", story)
     
     system_msg = f"You are an assistant that answers the questions to the children's "\
                  "story given below. You should answer the questions descriptively in a "\
@@ -322,11 +325,15 @@ def generate():
     for i in range(len(prompts)):
         img.append(generate_image(prompts[i]))
         print("Image generated")
-    audio_file = text_to_wav(story, title, "./audios")
+    # audio_file = text_to_wav(story, title, "./audios")
+    audio_file = ""
     print("Audio generated")
     save_story(title, story, img, audio_file)
 
-    return jsonify({'title': title, 'story': story, "id": len(stories_df),
+    t = getLance()
+    tl = len(t)
+
+    return jsonify({'title': title, 'story': story, "id": tl,
                      'img': request.root_url + 'images/' + title + '.png', 'audio': request.root_url + 'audios/' + title + '.wav'})
 
 @app.route('/get_story', methods=['GET'])
@@ -367,7 +374,8 @@ def get_followup():
     story_id = int(request.args.get('story_id'))
     question = request.args.get('question')
     response = get_followup_response(session_id, story_id, question)
-    audio_file = text_to_wav(response, f"temp", "./audios")
+    # audio_file = text_to_wav(response, f"temp", "./audios")
+    audio_file = ""
     return jsonify({'response': response, 'audio': request.root_url + 'audios/' + 'temp' + '.wav'})
 
 def transcribe_file(audio):

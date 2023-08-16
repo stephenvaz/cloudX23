@@ -9,6 +9,8 @@ class HomeController extends GetxController {
   RxBool isLoading = false.obs;
   late Api _api;
 
+  RxBool isLoading2 = false.obs;
+
   @override
   void onInit() {
     _api = Api();
@@ -17,8 +19,10 @@ class HomeController extends GetxController {
   }
 
   void fetchData() async {
-    final int count = await _api.getStoryCount();
-    final data = await _api.getStory(count);
+    
+    // final int count = await _api.getStoryCount();
+    isLoading2.value = true;
+    final data = await _api.getStory(0);
     print("fdata $data");
     // iterate through the list and in the imgs array of every object replace the url with the base url
     // for (var i = 0; i < data.length; i++) {
@@ -33,7 +37,8 @@ class HomeController extends GetxController {
     stories.assignAll([]);
 
     stories.assignAll(data);
-    stories = stories.reversed.toList().obs;
+    // stories = stories.reversed.toList().obs;
+    isLoading2.value = false;
   }
 
   void createStory(String topic) async {

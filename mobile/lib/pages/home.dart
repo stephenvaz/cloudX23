@@ -28,14 +28,45 @@ class Home extends StatelessWidget {
           () {
             print("Loading: ${_controller.isLoading.value}");
             print("Stories: ${_controller.stories.length}");
-            if (_controller.stories.isEmpty) {
-              return const Center(
-                child: CircularProgressIndicator(),
+            print("Loading2: ${_controller.isLoading2.value}");
+            // if (_controller.isLoading2.value == true) {
+              if (_controller.isLoading2.value) {
+              return ListView.builder(
+                itemCount: 10,
+                itemBuilder: (context, index) {
+                  return const LoadingTile();
+                },
               );
-            } else {
+            } 
+            else if(!_controller.isLoading2.value && _controller.stories.isEmpty && !_controller.isLoading.value) {
+              return const Center(
+                child: Text(
+                  "No stories found\nGenerate a story to get started",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            }
+            else if(
+              _controller.isLoading.value && _controller.stories.isEmpty && !_controller.isLoading2.value
+            ) {
+              return ListView.builder(
+                itemCount: 1,
+                itemBuilder: (context, index) {
+                  return const LoadingTile();
+                },
+              );
+            }
+
+            else {
               return ListView.builder(
                 itemCount: _controller.stories.length,
                 itemBuilder: (context, index) {
+                  print(_controller.stories[index]['id']);
                   if (index == 0 && _controller.isLoading.value) {
                     return Column(
                       children: [

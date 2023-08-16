@@ -119,3 +119,21 @@ id,sess_id,story_id,role,content
 118,557859,13,assistant,"The names of the three little pigs are Buster, Bailey, and Benny."
 119,468236,13,user,name of princess
 120,468236,13,assistant,"There is no princess mentioned in this story. The story is about three little pigs named Buster, Bailey, and Benny and their journey to build their own homes. If you have any questions about the pigs or their story, feel free to ask!"
+121,233102,13,user,who was max
+122,233102,13,assistant,"I'm sorry, but I don't have any information about Max in the story. Can you please ask a question related to the three little pigs and their adventures?"
+123,511280,13,user,where did max live
+124,511280,13,assistant,"I'm sorry, but the character named Max does not appear in the story. Please ask a question related to the three little pigs and their adventure to build their homes."
+125,205983,13,user,where did max live
+126,205983,13,assistant,"I'm sorry, but I can only answer questions related to the story of the three little pigs. If you have any questions about the story, I'd be happy to help!"
+127,299132,13,user,where did lilly live
+128,299132,13,assistant,"I'm sorry, but I can only answer questions related to the story of the three little pigs. If you have any questions about the story or the characters in it, feel free to ask!"
+129,566660,13,user,WHO IS MIA
+130,566660,13,assistant,"I'm sorry, but I don't have any information about a character named Mia in the story I just told. Could you please ask a question related to the story?"
+131,618426,13,user,WHO IS MAX
+132,618426,13,assistant,"I'm sorry, but there is no character named Max in the story. Please ask a question related to the story of the three little pigs."
+133,640026,1,user,names of the pigs
+134,640026,1,assistant,"The names of the three little pigs are Pippin, Petunia, and Percy."
+135,459696,2,user,who wins the race
+136,459696,2,assistant,"Theo, the slow and steady tortoise, wins the race."
+137,539858,3,user,whats the name of the ant and elephant 
+138,539858,3,assistant,"The name of the ant is Adam, and the name of the elephant is Ella."
