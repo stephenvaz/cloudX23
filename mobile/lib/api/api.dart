@@ -6,8 +6,10 @@ import 'package:flutter/foundation.dart';
 class Api {
   final Dio _dio = Dio();
 
-  static var baseURL = "http://127.0.0.1:5000/";
-  // static var baseURL = "https://tedo.serveo.net/";
+  // static var baseURL = "http://127.0.0.1:5000/";
+  static var baseURL = "http://10.0.2.2:5000/";
+  // static var baseURL = "https://ted11.serveo.net/";
+  // https://ted11.serveo.net
 
   // endpoints:
   static final storiesCount = "${baseURL}get_story_count";

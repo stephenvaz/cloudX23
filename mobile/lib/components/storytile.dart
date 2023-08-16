@@ -10,14 +10,14 @@ import 'package:story/components/storyplayer.dart';
 class StoryTile extends StatefulWidget {
   final int id;
   final String title;
-  final List image;
+  List? image;
   final String story;
 
-  const StoryTile({
+  StoryTile({
     Key? key,
     required this.id,
     required this.title,
-    required this.image,
+    this.image,
     required this.story,
   }) : super(key: key);
 
@@ -30,21 +30,29 @@ class _StoryTileState extends State<StoryTile> {
   Color? textColor;
   String rImage = '';
 
+  List listImgs = [];
+
   final FlipCardController _flipCardController = FlipCardController();
 
   @override
   void initState() {
     super.initState();
     // print("id: ${widget.id}");
+    listImgs = widget.image ?? [];
     // rImage = widget.image.replaceAll("http://127.0.0.1:5000/", Api.baseURL);
-    for (var i = 0; i < widget.image.length; i++) {
-      widget.image[i].replaceAll("http://127.0.0.1:5000/", Api.baseURL);
+    for (var i = 0; i < listImgs.length; i++) {
+      print("image: ${listImgs[i]}");
+      listImgs[i] =
+          listImgs[i].replaceAll("http://127.0.0.1:5000/", Api.baseURL);
     }
+    print("image: ${listImgs}");
 
     // choose a random image from the list
     // get a random number between 0 and length of the list
-    final int random = Random().nextInt(widget.image.length);
-    rImage = widget.image[random];
+    // final int random = Random().nextInt(widget.image.length);
+    // rImage = widget.image[random];
+    final int random = Random().nextInt(listImgs.length);
+    rImage = listImgs[random];
     _extractImageColor();
   }
 
@@ -53,6 +61,7 @@ class _StoryTileState extends State<StoryTile> {
       // NetworkImage(widget.image),
       NetworkImage(rImage),
     );
+    if (!mounted) return;
     setState(() {
       backgroundColor = paletteGenerator.dominantColor?.color;
       if (backgroundColor != null) {
@@ -138,7 +147,8 @@ class _StoryTileState extends State<StoryTile> {
                   ),
                   Flexible(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                      padding: const EdgeInsets.only(
+                          left: 8.0, right: 8.0, bottom: 8.0),
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
@@ -150,7 +160,7 @@ class _StoryTileState extends State<StoryTile> {
                           // widget.story.substring(0, 250) + '...',
                           widget.story,
                           overflow: TextOverflow.ellipsis,
-                          maxLines:8,
+                          maxLines: 8,
                           style: const TextStyle(
                             fontSize: 13,
                             color: Colors.white,
@@ -258,7 +268,8 @@ class _StoryTileState extends State<StoryTile> {
       context: context,
       backgroundColor: Colors.black87,
       builder: (context) {
-        return StoryPlayer(widget: widget, textColor: textColor);
+        return StoryPlayer(
+            widget: widget, textColor: textColor, images: listImgs);
       },
     );
   }

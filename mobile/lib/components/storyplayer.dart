@@ -10,10 +10,12 @@ class StoryPlayer extends StatefulWidget {
     Key? key,
     required this.widget,
     required this.textColor,
+    required this.images
   }) : super(key: key);
 
   final StoryTile widget;
   final ui.Color? textColor;
+  final List<dynamic> images;
 
   @override
   State<StoryPlayer> createState() => _StoryPlayerState();
@@ -96,7 +98,7 @@ class _StoryPlayerState extends State<StoryPlayer>
       setState(() {
         currentParagraphIndex = index + 1;
         currentImageIndex =
-            (currentImageIndex + 1) % widget.widget.image.length;
+            (currentImageIndex + 1) % widget.widget.image!.length ;
       });
       _animationController.reset();
       await _animationController.forward();
@@ -167,7 +169,8 @@ class _StoryPlayerState extends State<StoryPlayer>
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: Image.network(
-                  widget.widget.image[currentImageIndex],
+                  // widget.widget.image[currentImageIndex],
+                  widget.images[currentImageIndex],
                   fit: BoxFit.cover,
                 ),
               ),

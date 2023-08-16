@@ -4,7 +4,7 @@ import 'package:story/api/api.dart';
 import 'package:story/components/loadingtile.dart';
 import 'package:story/components/storytile.dart';
 import 'package:story/controllers/home_controller.dart';
-import 'package:animated_gradient/animated_gradient.dart';
+// import 'package:animated_gradient/animated_gradient.dart';
 
 class Home extends StatelessWidget {
   final HomeController _controller = Get.put<HomeController>(HomeController());
@@ -27,6 +27,7 @@ class Home extends StatelessWidget {
         child: Obx(
           () {
             print("Loading: ${_controller.isLoading.value}");
+            print("Stories: ${_controller.stories.length}");
             if (_controller.stories.isEmpty) {
               return const Center(
                 child: CircularProgressIndicator(),
@@ -72,66 +73,63 @@ class Home extends StatelessWidget {
           },
         ),
       ),
-      floatingActionButton: Transform.translate(
-        offset: const Offset(0, 18),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 24, right: 24),
-          child: SizedBox(
-            // width: double.infinity,
-            height: 64,
-            child: ElevatedButton(
-              // style: ElevatedButton.styleFrom(
-              //   // primary: Color(0xffF5F5F5),
-              //   // backgroundColor: Color.fromARGB(255, 39, 33, 33),
-              //   shadowColor: Colors.white,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(left: 24, right: 24),
+        child: SizedBox(
+          // width: double.infinity,
+          height: 64,
+          child: ElevatedButton(
+            // style: ElevatedButton.styleFrom(
+            //   // primary: Color(0xffF5F5F5),
+            //   // backgroundColor: Color.fromARGB(255, 39, 33, 33),
+            //   shadowColor: Colors.white,
 
-              //   shape: RoundedRectangleBorder(
-              //     borderRadius: BorderRadius.circular(32),
-              //   ),
-              // ),
-              onLongPress: () {
-                myDialog();
-              },
-              onPressed: () async {
-                // TODO: A dialog to get the text for story generation
+            //   shape: RoundedRectangleBorder(
+            //     borderRadius: BorderRadius.circular(32),
+            //   ),
+            // ),
+            onLongPress: () {
+              myDialog();
+            },
+            onPressed: () async {
+              // TODO: A dialog to get the text for story generation
 
-                Get.dialog(
-                  AlertDialog(
-                    title: const Text('Enter a story topic'),
-                    content: TextFormField(
-                      controller: _controller.topicController,
-                      decoration: const InputDecoration(
-                        hintText: 'Enter a topic',
-                      ),
+              Get.dialog(
+                AlertDialog(
+                  title: const Text('Enter a story topic'),
+                  content: TextFormField(
+                    controller: _controller.topicController,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter a topic',
                     ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Get.back();
-                        },
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          _controller
-                              .createStory(_controller.topicController.text);
-                          // _controller.isLoading.value =
-                          //     !_controller.isLoading.value;
-                          Get.back();
-                        },
-                        child: const Text('Generate'),
-                      ),
-                    ],
                   ),
-                );
-              },
-              child: const Text(
-                'Generate Story',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  // color: Colors.white,
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        _controller
+                            .createStory(_controller.topicController.text);
+                        // _controller.isLoading.value =
+                        //     !_controller.isLoading.value;
+                        Get.back();
+                      },
+                      child: const Text('Generate'),
+                    ),
+                  ],
                 ),
+              );
+            },
+            child: const Text(
+              'Generate Story',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                // color: Colors.white,
               ),
             ),
           ),
