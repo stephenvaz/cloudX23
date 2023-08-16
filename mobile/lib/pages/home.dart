@@ -41,7 +41,7 @@ class Home extends StatelessWidget {
                       children: [
                         LoadingTile(),
                         StoryTile(
-                          id: _controller.stories[index]['id'],
+                          id: int.parse(_controller.stories[index]['id']),
                           title: _controller.stories[index]['title'],
                           image: _controller.stories[index]['img'],
                           story: _controller.stories[index]['story'],
@@ -53,7 +53,7 @@ class Home extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 64.0),
                       child: StoryTile(
-                        id: _controller.stories[index]['id'],
+                        id: int.parse(_controller.stories[index]['id']),
                         title: _controller.stories[index]['title'],
                         image: _controller.stories[index]['img'],
                         story: _controller.stories[index]['story'],
@@ -62,7 +62,7 @@ class Home extends StatelessWidget {
                     );
                   }
                   return StoryTile(
-                    id: _controller.stories[index]['id'],
+                    id: int.parse(_controller.stories[index]['id']),
                     title: _controller.stories[index]['title'],
                     image: _controller.stories[index]['img'],
                     story: _controller.stories[index]['story'],
