@@ -6,7 +6,7 @@ import base64
 import os
 import requests
 import numpy as np
-import google.cloud.texttospeech as tts
+# import google.cloud.texttospeech as tts
 import lancedb
 
 
