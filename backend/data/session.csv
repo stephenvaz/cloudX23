@@ -115,3 +115,7 @@ id,sess_id,story_id,role,content
 114,680052,12,assistant,The kids were asked to build their own homes because their mother believed it was time for them to become independent and learn important life skills. Building their own homes would teach them how to take care of themselves and prepare for the future.
 115,512084,12,user,which house lasted the longest?
 116,512084,12,assistant,"The house made of sturdy bricks lasted the longest. The strong bricks were able to withstand the wolf's huffing and puffing, and the house remained standing, keeping Peach, the cleverest pig, safe inside."
+117,557859,13,user,names of pigs
+118,557859,13,assistant,"The names of the three little pigs are Buster, Bailey, and Benny."
+119,468236,13,user,name of princess
+120,468236,13,assistant,"There is no princess mentioned in this story. The story is about three little pigs named Buster, Bailey, and Benny and their journey to build their own homes. If you have any questions about the pigs or their story, feel free to ask!"

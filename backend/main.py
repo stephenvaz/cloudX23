@@ -213,14 +213,15 @@ def get_followup_response(session_id: int, story_id: int, question: str):
     global session_df
 
     # story = stories_df[stories_df['id'] == story_id]['story'].values[0]
-    t = getLance()
-    print(f"story id {story_id}")
-    story = t[story_id-1]['story']
+    # t = getLance()
+    # print("t", t)
+    # print(f"story id {story_id}")
+    # story = t[story_id+1]['story']
 
-    # print("story_id", story_id)
-    # data = getLance()
-    # target_story = next((story for story in data["stories"] if int(story["id"]) == story_id), None)
-    # story = target_story["story"]
+    print("story_id", story_id)
+    data = getLance()
+    target_story = next((story for story in data if int(story["id"]) == story_id), None)
+    story = target_story["story"]
     
     system_msg = f"You are an assistant that answers the questions to the children's "\
                  "story given below. You should answer the questions descriptively in a "\

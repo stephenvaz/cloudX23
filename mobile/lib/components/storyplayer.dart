@@ -85,8 +85,9 @@ class _StoryPlayerState extends State<StoryPlayer>
   }
 
   void initSetup() async {
-    await flutterTts.setVoice({"name": "Junior", "locale": "en-US"});
+    // await flutterTts.setVoice({"name": "Junior", "locale": "en-US"});
     await flutterTts.awaitSpeakCompletion(true);
+    await Future.delayed(const Duration(milliseconds: 500));
   }
 
   void speakParagraph(int index) async {
@@ -105,6 +106,7 @@ class _StoryPlayerState extends State<StoryPlayer>
       await Future.delayed(const Duration(milliseconds: 500));
       speakParagraph(currentParagraphIndex);
     } else {
+      if(!mounted) return;
       setState(() {
         isPlaying = false;
       });
@@ -247,8 +249,7 @@ class ChatOverlay extends StatefulWidget {
   State<ChatOverlay> createState() => _ChatOverlayState();
 }
 
-class _ChatOverlayState extends State<ChatOverlay>
-    with SingleTickerProviderStateMixin {
+class _ChatOverlayState extends State<ChatOverlay> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
 
@@ -426,80 +427,3 @@ class ChatBubble extends StatelessWidget {
     );
   }
 }
-
-
-// class ChatBubble extends StatefulWidget {
-//   final String message;
-//   final bool isUser;
-//   final bool? isCenter;
-
-//   const ChatBubble({
-//     Key? key,
-//     required this.message,
-//     required this.isUser,
-//     this.isCenter,
-//   }) : super(key: key);
-
-//   @override
-//   _ChatBubbleState createState() => _ChatBubbleState();
-// }
-
-// class _ChatBubbleState extends State<ChatBubble>
-//     with SingleTickerProviderStateMixin {
-//   late AnimationController _animationController;
-//   late Animation<Offset> _slideAnimation;
-
-//   @override
-//   void initState() {
-//     super.initState();
-
-//     final slideOffset = widget.isUser ? Offset(-1.0, 0) : Offset(1.0, 0);
-
-//     _animationController = AnimationController(
-//       vsync: this,
-//       duration: const Duration(milliseconds: 500),
-//     );
-
-//     _slideAnimation = Tween<Offset>(
-//       begin: slideOffset,
-//       end: Offset.zero,
-//     ).animate(CurvedAnimation(
-//       parent: _animationController,
-//       curve: Curves.easeInOut,
-//     ));
-
-//     _animationController.forward();
-//   }
-
-//   @override
-//   void dispose() {
-//     _animationController.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return SlideTransition(
-//       position: _slideAnimation,
-//       child: Container(
-//         margin: const EdgeInsets.symmetric(vertical: 4.0),
-//         padding: const EdgeInsets.all(10.0),
-//         decoration: BoxDecoration(
-//           color: widget.isUser ? Colors.blue : Colors.grey,
-//           borderRadius: BorderRadius.circular(12.0),
-//         ),
-//         child: (widget.isCenter ?? false)
-//             ? Center(
-//                 child: Text(
-//                   widget.message,
-//                   style: const TextStyle(color: Colors.white),
-//                 ),
-//               )
-//             : Text(
-//                 widget.message,
-//                 style: const TextStyle(color: Colors.white),
-//               ),
-//       ),
-//     );
-//   }
-// }

@@ -31,8 +31,9 @@ class HomeController extends GetxController {
 
     // }
     stories.assignAll([]);
+
     stories.assignAll(data);
-    // stories = stories.reversed.toList().obs;
+    stories = stories.reversed.toList().obs;
   }
 
   void createStory(String topic) async {
