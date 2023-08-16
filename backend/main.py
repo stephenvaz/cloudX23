@@ -23,7 +23,11 @@ stories_file = 'data/stories.csv'
 session_file = 'data/session.csv'
 uri = "./data/lancedb"
 db = lancedb.connect(uri)
-# db.create_table('mytale', data=[{"vector":[0,0],"id": "0", "title": "", "story": "", "img":['','','',''], "audio":""}])
+
+try:
+    db.create_table('mytale', data=[{"vector":[0,0],"id": "0", "title": "", "story": "", "img":['','','',''], "audio":""}])
+except:
+    pass
 
 def insertIntoLance(data):
     t = db.open_table('mytale')
