@@ -6,12 +6,12 @@ import 'package:story/components/storytile.dart';
 import 'package:lottie/lottie.dart';
 
 class StoryPlayer extends StatefulWidget {
-  const StoryPlayer({
-    Key? key,
-    required this.widget,
-    required this.textColor,
-    required this.images
-  }) : super(key: key);
+  const StoryPlayer(
+      {Key? key,
+      required this.widget,
+      required this.textColor,
+      required this.images})
+      : super(key: key);
 
   final StoryTile widget;
   final ui.Color? textColor;
@@ -99,14 +99,14 @@ class _StoryPlayerState extends State<StoryPlayer>
       setState(() {
         currentParagraphIndex = index + 1;
         currentImageIndex =
-            (currentImageIndex + 1) % widget.widget.image!.length ;
+            (currentImageIndex + 1) % widget.widget.image!.length;
       });
       _animationController.reset();
       await _animationController.forward();
       await Future.delayed(const Duration(milliseconds: 500));
       speakParagraph(currentParagraphIndex);
     } else {
-      if(!mounted) return;
+      if (!mounted) return;
       setState(() {
         isPlaying = false;
       });
@@ -157,85 +157,94 @@ class _StoryPlayerState extends State<StoryPlayer>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          height: MediaQuery.of(context).size.height * 0.88,
-          decoration: BoxDecoration(
-            color: Colors.black87,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          padding: const EdgeInsets.all(16),
-          child: Column(
+    return SafeArea(
+      child: Scaffold(
+        
+        backgroundColor: Colors.transparent,
+        extendBodyBehindAppBar: true,
+        extendBody: true,
+        
+        body: Align(
+          alignment: Alignment.bottomLeft,
+          child: Stack(
+            // alignment: AlignmentDirectional.topStart,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.network(
-                  // widget.widget.image[currentImageIndex],
-                  widget.images[currentImageIndex],
-                  fit: BoxFit.cover,
+              Container(
+                // height: MediaQuery.of(context).size.height * 0.80,
+                decoration: BoxDecoration(
+                  color: Colors.black87,
+                  borderRadius: BorderRadius.circular(16),
                 ),
-              ),
-              // SizedBox(height: 16),
-              Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      storyParagraphs[currentParagraphIndex],
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontFamily: 'KidsFont',
-                        color: widget.textColor,
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.network(
+                        widget.images[currentImageIndex],
+                        fit: BoxFit.cover,
                       ),
                     ),
-                  ),
-                ),
-              ),
-              // SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(32),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          // Handle search button click
-                          toggleChatOverlay();
-                        },
-                        icon: const Icon(Icons.search,
-                            color: Colors.white, size: 36),
-                      ),
-                      IconButton(
-                        onPressed: togglePlayPause,
-                        icon: Icon(
-                          isPlaying ? Icons.pause : Icons.play_arrow,
-                          size: 36,
-                          color: Colors.white,
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            storyParagraphs[currentParagraphIndex],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontFamily: 'KidsFont',
+                              color: widget.textColor,
+                            ),
+                          ),
                         ),
                       ),
-                      IconButton(
-                        onPressed: replayStory,
-                        icon: const Icon(Icons.replay,
-                            color: Colors.white, size: 36),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(32),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                toggleChatOverlay();
+                              },
+                              icon: const Icon(Icons.search,
+                                  color: Colors.white, size: 36),
+                            ),
+                            IconButton(
+                              onPressed: togglePlayPause,
+                              icon: Icon(
+                                isPlaying ? Icons.pause : Icons.play_arrow,
+                                size: 36,
+                                color: Colors.white,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: replayStory,
+                              icon: const Icon(Icons.replay,
+                                  color: Colors.white, size: 36),
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
+              if (isChatOverlayVisible) ChatOverlay(parentState: this),
             ],
           ),
         ),
-        if (isChatOverlayVisible) ChatOverlay(parentState: this),
-      ],
+      ),
     );
   }
 }
@@ -249,7 +258,8 @@ class ChatOverlay extends StatefulWidget {
   State<ChatOverlay> createState() => _ChatOverlayState();
 }
 
-class _ChatOverlayState extends State<ChatOverlay> with SingleTickerProviderStateMixin {
+class _ChatOverlayState extends State<ChatOverlay>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
 
@@ -281,111 +291,108 @@ class _ChatOverlayState extends State<ChatOverlay> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: SlideTransition(
-        position: _slideAnimation,
-        child: Container(
-          decoration: BoxDecoration(
-            color: const Color(0xff32393d).withOpacity(0.9),
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(16.0)),
-          ),
-          padding:
-              const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      widget.parentState.clearChat();
-                    },
-                    icon: const Icon(
-                      Icons.delete,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      // widget.parentState.closeChatOverlay();
-                      _animationController.reverse();
-                    },
-                    icon: const Icon(
-                      Icons.cancel,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                  ),
-                ],
-              ),
-              if (widget.parentState.chatMessages.isEmpty)
-                // print("empty");
-                // a chat bubble to indicate that you can ask any question related to the story
-                const ChatBubble(
-                    message: 'Ask me anything about the story!',
-                    isUser: false,
-                    isCenter: true),
-              Expanded(
-                child: ListView.builder(
-                  reverse: true,
-                  itemCount: widget.parentState.chatMessages.length,
-                  itemBuilder: (context, index) {
-                    // print(parentState.chatMessages.length);
-                    // if (parentState.chatMessages.isEmpty) {
-                    //   print("empty");
-                    //   // a chat bubble to indicate that you can ask any question related to the story
-                    //   return const ChatBubble(
-                    //       message: 'Ask me anything!', isUser: false);
-                    // }
-                    final message = widget.parentState.chatMessages[index];
-                    final isUser = message.startsWith('You:');
-                    return ChatBubble(
-                        message: message, isUser: isUser);
+    return SlideTransition(
+      position: _slideAnimation,
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xff32393d).withOpacity(0.9),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
+        ),
+        padding:
+            const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    widget.parentState.clearChat();
                   },
+                  icon: const Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    _animationController.reverse();
+                    await Future.delayed(const Duration(milliseconds: 300));
+                    widget.parentState.closeChatOverlay();
+                  },
+                  icon: const Icon(
+                    Icons.cancel,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
+              ],
+            ),
+            if (widget.parentState.chatMessages.isEmpty)
+              // print("empty");
+              // a chat bubble to indicate that you can ask any question related to the story
+              const ChatBubble(
+                  message: 'Ask me anything about the story!',
+                  isUser: false,
+                  isCenter: true),
+            Expanded(
+              child: ListView.builder(
+                reverse: true,
+                itemCount: widget.parentState.chatMessages.length,
+                itemBuilder: (context, index) {
+                  // print(parentState.chatMessages.length);
+                  // if (parentState.chatMessages.isEmpty) {
+                  //   print("empty");
+                  //   // a chat bubble to indicate that you can ask any question related to the story
+                  //   return const ChatBubble(
+                  //       message: 'Ask me anything!', isUser: false);
+                  // }
+                  final message = widget.parentState.chatMessages[index];
+                  final isUser = message.startsWith('You:');
+                  return ChatBubble(message: message, isUser: isUser);
+                },
+              ),
+            ),
+            if (widget.parentState.isBotTyping)
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 4.0, horizontal: 12.0),
+                child: Row(
+                  children: [
+                    const Text('AI: ', style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 8),
+                    SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: Lottie.asset('assets/typing_indicator.json'),
+                    ),
+                  ],
                 ),
               ),
-              if (widget.parentState.isBotTyping)
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 4.0, horizontal: 12.0),
-                  child: Row(
-                    children: [
-                      const Text('AI: ', style: TextStyle(color: Colors.white)),
-                      const SizedBox(width: 8),
-                      SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: Lottie.asset('assets/typing_indicator.json'),
-                      ),
-                    ],
-                  ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: widget.parentState.textController,
+              decoration: InputDecoration(
+                hintText: 'Type a message...',
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide.none,
                 ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: widget.parentState.textController,
-                decoration: InputDecoration(
-                  hintText: 'Type a message...',
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide.none,
-                  ),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      widget.parentState.sendMessage();
-                    },
-                    icon: const Icon(Icons.send),
-                  ),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    widget.parentState.sendMessage();
+                  },
+                  icon: const Icon(Icons.send),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

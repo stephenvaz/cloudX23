@@ -139,3 +139,13 @@ id,sess_id,story_id,role,content
 138,539858,3,assistant,"The name of the ant is Adam, and the name of the elephant is Ella."
 139,753818,2,user,name of elephant
 140,753818,2,assistant,The name of the elephant in the story is Ellie.
+141,763864,1,user,what's the name of the pig?
+142,763864,1,assistant,"There are three pigs in the story. Their names are Oliver, Benny, and Charlie."
+143,395971,1,user,what is the pigs name
+144,395971,1,assistant,"The pigs' names are Oliver, Benny, and Charlie."
+145,571567,1,user,ok thanks
+146,571567,1,assistant,"You're welcome! If you have any more questions about the story, feel free to ask."
+147,926147,1,user,what were the names of the pigs?
+148,926147,1,assistant,"The names of the three little pigs were Bacon, Hamlet, and Pancake."
+149,730449,1,user,why were they asked to build homes?
+150,730449,1,assistant,They were asked to build homes because their Mama Pig was concerned for their safety. She wanted to make sure that they were protected from the sneaky wolf that roamed the area. Building sturdy homes would keep them safe from any harm the wolf might bring.

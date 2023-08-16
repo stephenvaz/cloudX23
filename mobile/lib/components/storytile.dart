@@ -267,6 +267,8 @@ class _StoryTileState extends State<StoryTile> {
       isScrollControlled: true,
       context: context,
       backgroundColor: Colors.black87,
+      // anchorPoint: Offset(0, 0),
+      
       builder: (context) {
         return StoryPlayer(
             widget: widget, textColor: textColor, images: listImgs);
