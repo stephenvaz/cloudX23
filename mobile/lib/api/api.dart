@@ -7,7 +7,8 @@ class Api {
   final Dio _dio = Dio();
 
   // static var baseURL = "http://127.0.0.1:5000/";
-  static var baseURL = "http://10.0.2.2:8000/";
+  // static var baseURL = "http://10.0.2.2:8000/";
+  static var baseURL = "https://mytale.onrender.com/";
   // static var baseURL = "https://ted11.serveo.net/";
   // https://ted11.serveo.net
 
@@ -36,7 +37,7 @@ class Api {
       final response = await _dio.get("$getNstories?n=$n");
       Map data = response.data;
       List<dynamic> stories = data['stories'];
-      // sort the stories by the id in desc order in the individual objects 
+      // sort the stories by the id in desc order in the individual objects
       stories.sort((a, b) => b['id'].compareTo(a['id']));
       // print(data['stories']);
       return stories ?? [];
