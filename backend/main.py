@@ -190,7 +190,8 @@ def save_story(title: str, story: str, img: [],audio_filename: str):
     images_dest=[]
 
     for i in range(len(img)):
-        images_dest.append(request.root_url + 'images/' + title+str(i) + '.png')
+        # images_dest.append(request.root_url + 'images/' + title+str(i) + '.png')
+        images_dest.append('images/' + title+str(i) + '.png')
 
     images_dest = np.array(images_dest)
     # temp_df = pd.DataFrame({

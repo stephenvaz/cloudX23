@@ -9,7 +9,7 @@ class Api {
   static var baseURL = "http://127.0.0.1:5000/";
   // static var baseURL = "http://10.0.2.2:5000/";
   // static var baseURL = "https://mytale.onrender.com/";
-  // static var baseURL = "https://ted11.serveo.net/";
+  // static var baseURL = "https://tedo.serveo.net/";
   // https://ted11.serveo.net
 
   // endpoints:
@@ -19,7 +19,11 @@ class Api {
   static final generateStory = "${baseURL}generate";
 
   void setBaseURL(String url) {
+    print("url: $url");
     baseURL = url;
+    // also update the endpoints
+
+    print("updateBaseURL: $baseURL");
   }
 
   Future<int> getStoryCount() async {
@@ -34,7 +38,10 @@ class Api {
 
   Future<dynamic> getStory(int n) async {
     try {
-      final response = await _dio.get("$getNstories?n=$n");
+      // base url is the url of the server
+      // print("getStory: $baseURL");
+      // final response = await _dio.get("$getNstories?n=$n");
+      final response = await _dio.get("${baseURL}get_n_stories?n=$n");
       Map data = response.data;
       List<dynamic> stories = data['stories'];
       // sort the stories by the id in desc order in the individual objects
@@ -53,7 +60,7 @@ class Api {
     final sessionId = _generateRandomSessionId();
     try {
       final response = await _dio.get(
-        getFollowup,
+        "${baseURL}get_followup",
         queryParameters: {
           'session_id': sessionId,
           'story_id': storyId,
@@ -71,7 +78,7 @@ class Api {
   }) async {
     try {
       final response = await _dio.get(
-        generateStory,
+        "${baseURL}generate",
         queryParameters: {
           'topic': topic,
         },

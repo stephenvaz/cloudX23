@@ -149,3 +149,5 @@ id,sess_id,story_id,role,content
 148,926147,1,assistant,"The names of the three little pigs were Bacon, Hamlet, and Pancake."
 149,730449,1,user,why were they asked to build homes?
 150,730449,1,assistant,They were asked to build homes because their Mama Pig was concerned for their safety. She wanted to make sure that they were protected from the sneaky wolf that roamed the area. Building sturdy homes would keep them safe from any harm the wolf might bring.
+151,959459,1,user,names of the pigs
+152,959459,1,assistant,"The names of the pigs are Oliver, Molly, and Charlie."

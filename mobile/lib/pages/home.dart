@@ -30,15 +30,16 @@ class Home extends StatelessWidget {
             print("Stories: ${_controller.stories.length}");
             print("Loading2: ${_controller.isLoading2.value}");
             // if (_controller.isLoading2.value == true) {
-              if (_controller.isLoading2.value) {
+            if (_controller.isLoading2.value) {
               return ListView.builder(
                 itemCount: 10,
                 itemBuilder: (context, index) {
                   return const LoadingTile();
                 },
               );
-            } 
-            else if(!_controller.isLoading2.value && _controller.stories.isEmpty && !_controller.isLoading.value) {
+            } else if (!_controller.isLoading2.value &&
+                _controller.stories.isEmpty &&
+                !_controller.isLoading.value) {
               return const Center(
                 child: Text(
                   "No stories found\nGenerate a story to get started",
@@ -50,19 +51,16 @@ class Home extends StatelessWidget {
                   ),
                 ),
               );
-            }
-            else if(
-              _controller.isLoading.value && _controller.stories.isEmpty && !_controller.isLoading2.value
-            ) {
+            } else if (_controller.isLoading.value &&
+                _controller.stories.isEmpty &&
+                !_controller.isLoading2.value) {
               return ListView.builder(
                 itemCount: 1,
                 itemBuilder: (context, index) {
                   return const LoadingTile();
                 },
               );
-            }
-
-            else {
+            } else {
               return ListView.builder(
                 itemCount: _controller.stories.length,
                 itemBuilder: (context, index) {
@@ -192,6 +190,7 @@ class Home extends StatelessWidget {
               // _controller.createStory(_controller.urlController.text);
               // Api().baseUrl = _controller.urlController.text;
               Api().setBaseURL(_controller.urlController.text);
+              _controller.fetchData();
               // _controller.isLoading.value =
               //     !_controller.isLoading.value;
               Get.back();

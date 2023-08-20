@@ -42,8 +42,10 @@ class _StoryTileState extends State<StoryTile> {
     // rImage = widget.image.replaceAll("http://127.0.0.1:5000/", Api.baseURL);
     for (var i = 0; i < listImgs.length; i++) {
       print("image: ${listImgs[i]}");
-      listImgs[i] =
-          listImgs[i].replaceAll("http://127.0.0.1:5000/", Api.baseURL);
+      // listImgs[i] =
+      //     listImgs[i].replaceAll("http://127.0.0.1:5000/", Api.baseURL);
+      // i need to add base url to the image as it has been removed from db
+      listImgs[i] = Api.baseURL + listImgs[i];
     }
     print("image: ${listImgs}");
 
